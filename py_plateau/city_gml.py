@@ -74,18 +74,33 @@ class CityGml:
             # bldg:Building attribute=>gml:id
             attrib_id = "{%s}id" % nsmap["gml"]
             if attrib_id in building.attrib:
-                properties["id"] = building.attrib[attrib_id]
+                properties["gml_id"] = building.attrib[attrib_id]
 
             # gen:stringAttribute
             string_attributes = building.xpath("gen:stringAttribute", namespaces=nsmap)
             for string_attribute in string_attributes:
                 properties[string_attribute.attrib["name"]] = string_attribute.getchildren()[0].text
 
+            # bldg:class
+            bldg_class = building.xpath("bldg:class", namespaces=nsmap)
+            if len(bldg_class) > 0:
+                properties["class"] = bldg_class[0].text
+            
+            # bldg:usage
+            usage = building.xpath("bldg:usage", namespaces=nsmap)
+            if len(usage) > 0:
+                properties["usage"] = usage[0].text
+                
             # bldg:measuredHeight
             measured_heights = building.xpath("bldg:measuredHeight", namespaces=nsmap)
             if len(measured_heights) > 0:
                 properties["measured_height_uom"] = measured_heights[0].attrib["uom"]
                 properties["measured_height"] = float(measured_heights[0].text)
+                
+            # bldg:storeysAboveGround
+            storeysAboveGround = building.xpath("bldg:storeysAboveGround", namespaces=nsmap)
+            if len(storeysAboveGround) > 0:
+                properties["storeysAboveGround"] = float(storeysAboveGround[0].text)
 
             # bldg:address
             addresses = building.xpath(
@@ -113,9 +128,17 @@ class CityGml:
             if len(districts_and_zones_type) > 0:
                 properties["districts_and_zones_type"] = districts_and_zones_type[0].text
 
+            # uro:buildingID
+            buildingID = building.xpath(
+                "uro:buildingIDAttribute/uro:BuildingIDAttribute/uro:buildingID",
+                namespaces=nsmap,
+            )
+            if len(buildingID) > 0:
+                properties["buildingID"] = buildingID[0].text
+                
             # uro:prefecture
             prefecture = building.xpath(
-                "uro:buildingDetails/uro:BuildingDetails/uro:prefecture",
+                "uro:buildingIDAttribute/uro:BuildingIDAttribute/uro:prefecture",
                 namespaces=nsmap,
             )
             if len(prefecture) > 0:
@@ -123,7 +146,7 @@ class CityGml:
 
             # uro:city
             city = building.xpath(
-                "uro:buildingDetails/uro:BuildingDetails/uro:city",
+                "uro:buildingIDAttribute/uro:BuildingIDAttribute/uro:city",
                 namespaces=nsmap,
             )
             if len(city) > 0:
@@ -131,7 +154,7 @@ class CityGml:
 
             # uro:surveyYear
             survey_year = building.xpath(
-                "uro:buildingDetails/uro:BuildingDetails/uro:surveyYear",
+                "uro:buildingIDAttribute/uro:BuildingIDAttribute/uro:surveyYear",
                 namespaces=nsmap,
             )
             if len(survey_year) > 0:
