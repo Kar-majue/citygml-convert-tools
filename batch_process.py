@@ -2,7 +2,7 @@ import os
 import subprocess
 
 # 设置你的文件夹路径
-folder_path = './data/12217_kashiwa-shi_city_2020_citygml_6_op/udx/bldg'
+folder_path = './data/susono/udx/bldg'
 
 # 遍历文件夹中的所有文件
 for filename in os.listdir(folder_path):
